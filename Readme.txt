@@ -1,6 +1,3 @@
-Thanks for downloading this template!
+Arun Koundinya Parasa 
 
-Template Name: iPortfolio
-Template URL: https://bootstrapmade.com/iportfolio-bootstrap-portfolio-websites-template/
-Author: BootstrapMade.com
-License: https://bootstrapmade.com/license/
+Personal Portfolio Page

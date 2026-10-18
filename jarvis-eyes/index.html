@@ -1,0 +1,123 @@
+<!doctype html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Jarvis — eyes</title>
+<!--
+  Added to the iPhone home screen this runs full screen with no address bar,
+  so it is one tap from the lock screen rather than a bookmark to hunt for.
+  Add to Home Screen WHILE the ?t= token is in the URL: the shortcut keeps the
+  query string, and a home-screen app does not share Safari's localStorage.
+-->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Jarvis Eyes">
+<meta name="theme-color" content="#0b0d10">
+<!-- Lives on a personal site; there is no reason for it to be findable. -->
+<meta name="robots" content="noindex,nofollow">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAADmklEQVR42u3dXW7TQBSA0dbyGz+CDaCKpXQjsBPETmAjXQqq2AASYgE8RKqqJoHEnrkzc+d84oUQKY59cm0jJ7599ebdjXSqxSoQHIJDcAgOwSE4BIfgEByCQ4JDcAgOwSE4BIfgEByCQ3BIcAgOwSE4BIfgEByCQ3AIDgkOwSE4BIfgEByCQ3AIDsEhOCQ4BIfgEByCQ3AIDsEhOASHBIfgEByCQ3Coj9ap3u2Px5/HD95/eTj3/Iev98cPfrz7MMnqus13u/KTAq4ycaGS9G6Gx3Ehhc0sNhBJw2VIHBtA7Jex2ce4UIbBsQdEERaliAwEpWsc+0HUkFHKR/9QesRR0EQlGcV99KmkLxzFWdSTUclHV0S6wFHDRICMej46UdIYRz0WMTJq+2hLZE3JIlOHFdWESIPJEcMibGwEDI9WU2QhY6BXDB63azIW9jLjTY5IGfFjI/51Y9bnmomFETLS5IiX0WpstHr1qmt4ySRj5hEy0qlsExl7PriP3z8//+vdp2+dn9YGnOWuaWSUYvH8wT1E4udHcR8LGZv/Nf3+ZUkjY8M+5ZJtv8FHw4Pisut/MTOe+vP71+GP+RFxKjuKjBcmjomM5aM7HE5c8w2PGSfH8dg4+TTDY+mKauTRaO7lKbJFfFdWcJzfO7x++/7kM48fn23PUgCHQ9Gsh6Wrlfg0JJ6OQM/NktmC4//7F8ccEhyCQ3Cobxzz/EbWWO3fLtNNjj0Xdw10YZjdikbA0XzP0uSa3p6Xp8gWmXFybNs7zLZPKYnDYWmmQ9GpjzmuHQMTjo3COMYaHpdv77FkFNwKS7dLFnAMeMlW3yCj4dFo2fW/dL58befHtDPj0FppKQe6AuggoOB3ZXPIuKn6m2DDfZe61d6t22m9DLfEClvPy6DL3eHBYJNXr7qG15ildxHyiB+8Jc07aT48Il83Zn2uwe/HCBnoY7akfG/xwyPlLxg3+2H8gBGS44fxG576Nfveir1M//8j4H4r/Y6N2e+3EqDEnZqS4KhExD3e8uCoocTdIbPhKAvFfWXT4igFxR2pk+PYCcW97GfBsZnLVUQuZJHsKoWEOK518w8lJ03Mc53KXDh0Vb4rKzgEh+AQHIJDcAgOwSE4BIcEh+AQHIJDcAgOwSE4BIfgkOAQHIJDcAgOwSE4BIfgEBwSHIJDcAgOwSE4BIfgEByCQ3BIcAgOwSE4BIfgEByCQ3AIDgkOwSE4BIdi+wvp3Fpff0q0RAAAAABJRU5ErkJggg==">
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAADmklEQVR42u3dXW7TQBSA0dbyGz+CDaCKpXQjsBPETmAjXQqq2AASYgE8RKqqJoHEnrkzc+d84oUQKY59cm0jJ7599ebdjXSqxSoQHIJDcAgOwSE4BIfgEByCQ4JDcAgOwSE4BIfgEByCQ3BIcAgOwSE4BIfgEByCQ3AIDgkOwSE4BIfgEByCQ3AIDsEhOCQ4BIfgEByCQ3AIDsEhOASHBIfgEByCQ3Coj9ap3u2Px5/HD95/eTj3/Iev98cPfrz7MMnqus13u/KTAq4ycaGS9G6Gx3Ehhc0sNhBJw2VIHBtA7Jex2ce4UIbBsQdEERaliAwEpWsc+0HUkFHKR/9QesRR0EQlGcV99KmkLxzFWdSTUclHV0S6wFHDRICMej46UdIYRz0WMTJq+2hLZE3JIlOHFdWESIPJEcMibGwEDI9WU2QhY6BXDB63azIW9jLjTY5IGfFjI/51Y9bnmomFETLS5IiX0WpstHr1qmt4ySRj5hEy0qlsExl7PriP3z8//+vdp2+dn9YGnOWuaWSUYvH8wT1E4udHcR8LGZv/Nf3+ZUkjY8M+5ZJtv8FHw4Pisut/MTOe+vP71+GP+RFxKjuKjBcmjomM5aM7HE5c8w2PGSfH8dg4+TTDY+mKauTRaO7lKbJFfFdWcJzfO7x++/7kM48fn23PUgCHQ9Gsh6Wrlfg0JJ6OQM/NktmC4//7F8ccEhyCQ3Cobxzz/EbWWO3fLtNNjj0Xdw10YZjdikbA0XzP0uSa3p6Xp8gWmXFybNs7zLZPKYnDYWmmQ9GpjzmuHQMTjo3COMYaHpdv77FkFNwKS7dLFnAMeMlW3yCj4dFo2fW/dL58befHtDPj0FppKQe6AuggoOB3ZXPIuKn6m2DDfZe61d6t22m9DLfEClvPy6DL3eHBYJNXr7qG15ildxHyiB+8Jc07aT48Il83Zn2uwe/HCBnoY7akfG/xwyPlLxg3+2H8gBGS44fxG576Nfveir1M//8j4H4r/Y6N2e+3EqDEnZqS4KhExD3e8uCoocTdIbPhKAvFfWXT4igFxR2pk+PYCcW97GfBsZnLVUQuZJHsKoWEOK518w8lJ03Mc53KXDh0Vb4rKzgEh+AQHIJDcAgOwSE4BIcEh+AQHIJDcAgOwSE4BIfgkOAQHIJDcAgOwSE4BIfgEBwSHIJDcAgOwSE4BIfgEByCQ3BIcAgOwSE4BIfgEByCQ3AIDgkOwSE4BIdi+wvp3Fpff0q0RAAAAABJRU5ErkJggg==">
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#0b0d10; color:#e9edf2; font:15px/1.5 system-ui,sans-serif;
+         display:flex; flex-direction:column; height:100dvh; }
+  video { flex:1; width:100%; object-fit:cover; background:#000; }
+  .bar { padding:14px 16px calc(14px + env(safe-area-inset-bottom));
+         display:flex; gap:12px; align-items:center; background:#14181d; }
+  button { flex:1; padding:16px; font-size:17px; font-weight:600; border:0; border-radius:12px;
+           background:#2b6cb0; color:#fff; }
+  button.on { background:#9b2c2c; }
+  .meta { font-size:13px; color:#8b949e; min-width:96px; text-align:right; }
+  .dot { display:inline-block; width:8px; height:8px; border-radius:50%;
+         background:#444; margin-right:6px; }
+  .dot.live { background:#48bb78; }
+  .err { padding:12px 16px; background:#742a2a; font-size:14px; }
+</style></head>
+<body>
+<video id="v" playsinline autoplay muted></video>
+<div id="err" class="err" hidden></div>
+<div class="bar">
+  <button id="go">Start watching</button>
+  <div class="meta"><span id="dot" class="dot"></span><span id="status">idle</span></div>
+</div>
+<script>
+const ENDPOINT = "https://vojzksyfdmmhcrfqaxuh.supabase.co/functions/v1/eyes";
+const EVERY_MS = 8000;      // often enough for a cook, cheap enough to leave on
+const MAX_EDGE = 1024;      // a phone photo base64s to megabytes; this does not
+const token = new URL(location.href).searchParams.get("t") ||
+              localStorage.getItem("jarvis_eyes_token");
+if (token) localStorage.setItem("jarvis_eyes_token", token);
+
+const v = document.getElementById("v"), go = document.getElementById("go");
+const status = document.getElementById("status"), dot = document.getElementById("dot");
+const errBox = document.getElementById("err");
+let timer = null, stream = null, wake = null, sent = 0;
+
+const fail = (m) => { errBox.textContent = m; errBox.hidden = false; };
+if (!token) fail("No token. Open the link with ?t=... once; it is remembered after that.");
+
+async function frame() {
+  const c = document.createElement("canvas");
+  const s = Math.min(1, MAX_EDGE / Math.max(v.videoWidth, v.videoHeight));
+  c.width = Math.round(v.videoWidth * s); c.height = Math.round(v.videoHeight * s);
+  c.getContext("2d").drawImage(v, 0, 0, c.width, c.height);
+  const b64 = c.toDataURL("image/jpeg", 0.6).split(",")[1];
+  try {
+    const r = await fetch(ENDPOINT, {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-eyes-token": token },
+      body: JSON.stringify({ image: b64 }),
+    });
+    if (!r.ok) { fail("Upload refused: " + r.status + " " + (await r.text()).slice(0,80)); return; }
+    errBox.hidden = true;
+    status.textContent = (++sent) + " sent";
+  } catch (e) { fail("Upload failed: " + e.message); }
+}
+
+async function start() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 } },
+      audio: false,
+    });
+  } catch (e) { fail("Camera refused: " + e.message); return; }
+  v.srcObject = stream;
+  // Without this the screen sleeps mid-cook and the eyes quietly close.
+  try { wake = await navigator.wakeLock?.request("screen"); } catch (_) {}
+  await frame();
+  timer = setInterval(frame, EVERY_MS);
+  go.textContent = "Stop watching"; go.classList.add("on"); dot.classList.add("live");
+}
+
+function stop() {
+  clearInterval(timer); timer = null;
+  stream?.getTracks().forEach((t) => t.stop()); stream = null;
+  wake?.release?.(); wake = null;
+  go.textContent = "Start watching"; go.classList.remove("on"); dot.classList.remove("live");
+  status.textContent = "stopped";
+}
+
+go.onclick = () => (timer ? stop() : start());
+
+// Try to open the eyes without being asked twice.
+//
+// Safari needs a user gesture the FIRST time, but once permission is granted
+// for the origin it will usually hand the camera over on load — which turns
+// "open the app, tap start" into just opening the app. If it refuses, the
+// button is still sitting there, so the cost of trying is nothing.
+(async () => {
+  if (!token) return;
+  try {
+    const p = await navigator.permissions?.query({ name: "camera" });
+    if (p && p.state !== "granted") return;
+  } catch (_) { /* Safari often cannot answer this; try anyway */ }
+  try { await start(); } catch (_) { /* the button remains */ }
+})();
+// A screen lock still happens on some phones; resume rather than die silently.
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && timer) frame();
+});
+</script>
+</body></html>

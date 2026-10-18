@@ -29,10 +29,11 @@
   button { flex:1; padding:16px; font-size:17px; font-weight:600; border:0; border-radius:12px;
            background:#2b6cb0; color:#fff; }
   button.on { background:#9b2c2c; }
-  .meta { font-size:13px; color:#8b949e; min-width:96px; text-align:right; }
+  .meta { font-size:13px; color:#8b949e; min-width:110px; text-align:right; }
   .dot { display:inline-block; width:8px; height:8px; border-radius:50%;
          background:#444; margin-right:6px; }
   .dot.live { background:#48bb78; }
+  .dot.stale { background:#d69e2e; }
   .err { padding:12px 16px; background:#742a2a; font-size:14px; }
 </style></head>
 <body>
@@ -53,12 +54,28 @@ if (token) localStorage.setItem("jarvis_eyes_token", token);
 const v = document.getElementById("v"), go = document.getElementById("go");
 const status = document.getElementById("status"), dot = document.getElementById("dot");
 const errBox = document.getElementById("err");
-let timer = null, stream = null, wake = null, sent = 0;
+let stream = null, wake = null, sent = 0, running = false, lastOk = 0, loop = null;
 
 const fail = (m) => { errBox.textContent = m; errBox.hidden = false; };
 if (!token) fail("No token. Open the link with ?t=... once; it is remembered after that.");
 
+// Show the AGE of the last successful send, not a count.
+//
+// A count only ever goes up, so a camera that stopped ten minutes ago looks
+// exactly like one that is working. Age makes a stall visible, which matters
+// because the failure here is silent: iOS suspends the page the moment you
+// glance at a notification.
+function paint() {
+  if (!running) { status.textContent = "stopped"; dot.classList.remove("live","stale"); return; }
+  const age = lastOk ? Math.round((Date.now() - lastOk) / 1000) : null;
+  status.textContent = age === null ? "starting…" : age + "s ago";
+  dot.classList.toggle("live", age !== null && age < 30);
+  dot.classList.toggle("stale", age !== null && age >= 30);
+}
+setInterval(paint, 1000);
+
 async function frame() {
+  if (!stream || v.videoWidth === 0) return;
   const c = document.createElement("canvas");
   const s = Math.min(1, MAX_EDGE / Math.max(v.videoWidth, v.videoHeight));
   c.width = Math.round(v.videoWidth * s); c.height = Math.round(v.videoHeight * s);
@@ -71,9 +88,26 @@ async function frame() {
       body: JSON.stringify({ image: b64 }),
     });
     if (!r.ok) { fail("Upload refused: " + r.status + " " + (await r.text()).slice(0,80)); return; }
-    errBox.hidden = true;
-    status.textContent = (++sent) + " sent";
+    errBox.hidden = true; lastOk = Date.now(); sent++; paint();
   } catch (e) { fail("Upload failed: " + e.message); }
+}
+
+// A self-rescheduling loop rather than setInterval.
+//
+// iOS throttles and then freezes interval timers in a backgrounded page, and
+// an interval that has been frozen does not reliably resume. Re-arming after
+// each send means returning to the page always gets a working cadence back.
+function schedule() {
+  clearTimeout(loop);
+  if (!running) return;
+  loop = setTimeout(async () => { await frame(); schedule(); }, EVERY_MS);
+}
+
+// The wake lock is RELEASED automatically whenever the document hides, and
+// does not come back by itself — so without re-requesting it the screen sleeps
+// on the first glance away and the eyes close for good.
+async function holdScreen() {
+  try { wake = await navigator.wakeLock?.request("screen"); } catch (_) {}
 }
 
 async function start() {
@@ -84,29 +118,35 @@ async function start() {
     });
   } catch (e) { fail("Camera refused: " + e.message); return; }
   v.srcObject = stream;
-  // Without this the screen sleeps mid-cook and the eyes quietly close.
-  try { wake = await navigator.wakeLock?.request("screen"); } catch (_) {}
+  running = true;
+  await holdScreen();
   await frame();
-  timer = setInterval(frame, EVERY_MS);
-  go.textContent = "Stop watching"; go.classList.add("on"); dot.classList.add("live");
+  schedule();
+  go.textContent = "Stop watching"; go.classList.add("on"); paint();
 }
 
 function stop() {
-  clearInterval(timer); timer = null;
+  running = false; clearTimeout(loop); loop = null;
   stream?.getTracks().forEach((t) => t.stop()); stream = null;
   wake?.release?.(); wake = null;
-  go.textContent = "Start watching"; go.classList.remove("on"); dot.classList.remove("live");
-  status.textContent = "stopped";
+  go.textContent = "Start watching"; go.classList.remove("on"); paint();
 }
 
-go.onclick = () => (timer ? stop() : start());
+go.onclick = () => (running ? stop() : start());
 
-// Try to open the eyes without being asked twice.
-//
-// Safari needs a user gesture the FIRST time, but once permission is granted
-// for the origin it will usually hand the camera over on load — which turns
-// "open the app, tap start" into just opening the app. If it refuses, the
-// button is still sitting there, so the cost of trying is nothing.
+// Coming back from a lock screen or an app switch: take the wake lock again,
+// send immediately so the age resets, and re-arm the loop rather than trusting
+// that a frozen timer survived.
+document.addEventListener("visibilitychange", async () => {
+  if (document.hidden || !running) return;
+  await holdScreen();
+  await frame();
+  schedule();
+});
+
+// Try to open the eyes without being asked twice. Safari needs a gesture the
+// first time; once the origin is permitted it usually hands the camera over on
+// load. If it refuses, the button is still there, so trying costs nothing.
 (async () => {
   if (!token) return;
   try {
@@ -115,9 +155,5 @@ go.onclick = () => (timer ? stop() : start());
   } catch (_) { /* Safari often cannot answer this; try anyway */ }
   try { await start(); } catch (_) { /* the button remains */ }
 })();
-// A screen lock still happens on some phones; resume rather than die silently.
-document.addEventListener("visibilitychange", () => {
-  if (!document.hidden && timer) frame();
-});
 </script>
 </body></html>

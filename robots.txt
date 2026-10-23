@@ -1,0 +1,10 @@
+# Crawlers only read robots.txt at the domain root, so this file lists the
+# sitemaps of every project site hosted under arunkoundinya.github.io.
+User-agent: *
+Allow: /
+
+Sitemap: https://arunkoundinya.github.io/CanvassAndAnalyze/sitemap.xml
+Sitemap: https://arunkoundinya.github.io/AIBasicswithAK/sitemap.xml
+Sitemap: https://arunkoundinya.github.io/DeepLearning/sitemap.xml
+Sitemap: https://arunkoundinya.github.io/TidyTuesday/sitemap.xml
+Sitemap: https://arunkoundinya.github.io/BhavaStories/sitemap.xml

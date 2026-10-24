@@ -3,6 +3,7 @@
 User-agent: *
 Allow: /
 
+Sitemap: https://arunkoundinya.github.io/sitemap.xml
 Sitemap: https://arunkoundinya.github.io/CanvassAndAnalyze/sitemap.xml
 Sitemap: https://arunkoundinya.github.io/AIBasicswithAK/sitemap.xml
 Sitemap: https://arunkoundinya.github.io/DeepLearning/sitemap.xml
